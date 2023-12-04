@@ -23,7 +23,7 @@ fn main() {
 #[derive(Debug)]
 enum Spot {
     Number(String),
-    Symbol,
+    Symbol(String),
     Empty,
 }
 
@@ -54,7 +54,7 @@ fn build_engine(contents : String) -> Vec<Vec<Spot>> {
                     Spot::Empty
                 },
                 _ => {
-                    Spot::Symbol
+                    Spot::Symbol(c.to_string())
                 }
             }
         }).collect())
@@ -129,7 +129,7 @@ fn get_part_numbers(
     nums.push(get_num(r+1, c, engine, checked));    
     nums.push(get_num(r+1, c+1, engine, checked));    
 
-    nums    
+    nums.into_iter().filter(|num| num != &(0 as u32)).collect()
 }
 
 fn puzzle_1(contents: String) {
@@ -143,7 +143,7 @@ fn puzzle_1(contents: String) {
             let curr = &engine[r][c];
 
             match curr {
-                Spot::Symbol => sum += get_part_numbers(r, c, &engine, &mut checked)
+                Spot::Symbol(_) => sum += get_part_numbers(r, c, &engine, &mut checked)
                     .iter()
                     .sum::<u32>(),
                 _ => {}
@@ -166,21 +166,20 @@ fn puzzle_2(contents: String) {
             let curr = &engine[r][c];
 
             match curr {
-                Spot::Symbol => {
-                    let part_numbers = get_part_numbers(r, c, &engine, &mut checked);
+                Spot::Symbol(val) => {
+                    if val == "*" {
+                        let part_numbers = get_part_numbers(r, c, &engine, &mut checked);
 
-                    // TODO TODO TODO: Fix this part of it
-                    let to_add = if part_numbers.len() == 2 {
-                        part_numbers.iter().multiply::<u32>()
-                    } else {
-                        part_numbers.iter().sum()
+                        println!("Len: {}, part_numbers: {:?}", part_numbers.len(), part_numbers);
+
+                        if part_numbers.len() == 2 {
+                            sum += part_numbers.iter().product::<u32>();
+                        } 
                     }
-
-                    sum += to_add;
                 }
                 _ => {}
             }
-            
+
         }
     }
 
