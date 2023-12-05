@@ -1,5 +1,8 @@
 secret.txt
 
+# Don't share Advent of Code inputs 
+*/inputs/*
+
 # Rust executables
 */target/*
 
